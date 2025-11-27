@@ -1,0 +1,5 @@
+1.- pip install requests
+2.- pip install mysql-connector-python
+3.- pip install pwinput
+4.- Ejecutar el archivo schema_rentacar.sql en su gestor de base de datos MySQL para crear las tablas necesarias.
+5.- Ejecutar el archivo main.py
