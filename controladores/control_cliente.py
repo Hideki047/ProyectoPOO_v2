@@ -86,3 +86,6 @@ class ControladorClientes:
             return {"ok": True, "mensaje": "Cliente eliminado."}
 
         return {"ok": False, "mensaje": "Cliente no encontrado."}
+
+    def buscar_por_id(self, cliente_id):
+        return self.dao.buscar_por_id(cliente_id)

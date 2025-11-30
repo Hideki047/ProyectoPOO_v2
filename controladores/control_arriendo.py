@@ -63,8 +63,20 @@ class ControladorArriendos:
         }
 
     def listar_arriendos(self):
-        datos = self.dao.listar()
-        return [Arriendo(d) for d in datos]
+        """
+        Obtiene todos los arriendos desde el DAO, convierte sus DTO 
+        en objetos Arriendo y los devuelve.
+        """
+        datos = self.dao.listar_arriendos()
+        arriendos = []
+
+        for d in datos:  # d es ArriendoDTO
+            arriendos.append(
+                Arriendo(d)  # construir el modelo Arriendo desde el DTO
+            )
+
+        return arriendos
+
 
     def cancelar_arriendo(self, arriendo_id):
         datos = self.dao.buscar_por_id(arriendo_id)
@@ -80,3 +92,7 @@ class ControladorArriendos:
         self.dao_vehiculos.actualizar_estado(datos.vehiculo_id, "DISPONIBLE")
 
         return {"ok": True, "mensaje": "Arriendo cancelado correctamente."}
+    
+    def buscar_por_id(self, arriendo_id):
+        return self.dao.buscar_por_id(arriendo_id)
+

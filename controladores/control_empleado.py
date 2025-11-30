@@ -18,25 +18,23 @@ class ControladorEmpleados:
             return {"ok": False, "mensaje": "No existen empleados. Debe crear un gerente inicial."}
         return {"ok": True}
 
-    def crear_empleado(self, codigo, run_input, nombre, apellido, cargo, contrasena, contrasena2):
+    def crear_empleado(self, run_input, nombre, apellido, cargo, contrasena, contrasena2):
 
-        # Validar formato
         if not validar_run_chileno(run_input):
             return {"ok": False, "mensaje": "RUN inválido. Use formato 12345678-9."}
-        # NORMALIZAR SIEMPRE A FORMATO FINAL
+
         try:
             run = normalizar_run(run_input)
         except Exception as e:
             return {"ok": False, "mensaje": f"RUN inválido: {e}"}
-        # Asegurar que NO exista el RUN ya normalizado
+
         if self.dao.buscar_por_run(run):
             return {"ok": False, "mensaje": "RUN ya existe."}
-        # Validar contraseñas
+
         if contrasena != contrasena2:
             return {"ok": False, "mensaje": "Las contraseñas no coinciden."}
-        # Crear DTO
+
         dto = EmpleadoDTO(
-            codigo=codigo,
             run=run,   
             nombre=nombre,
             apellido=apellido,
@@ -58,26 +56,41 @@ class ControladorEmpleados:
             return {"ok": True, "mensaje": "Empleado eliminado."}
         return {"ok": False, "mensaje": "Empleado no encontrado."}
 
+    def editar_empleado(self, emp_id, nombre, apellido, cargo, contrasena, contrasena2):
+        actual = self.dao.buscar_por_id(emp_id)
+        if not actual:
+            return {"ok": False, "mensaje": "Empleado no encontrado."}
+        nuevo_hash = None
+        if contrasena:
+            if contrasena != contrasena2:
+                return {"ok": False, "mensaje": "Las contraseñas no coinciden."}
+            nuevo_hash = calcular_hash_contrasena(contrasena)
+        dto = EmpleadoDTO(
+            id=emp_id,
+            run=actual.run,
+            nombre=nombre or actual.nombre,
+            apellido=apellido or actual.apellido,
+            cargo=cargo or actual.cargo,
+            hash_contrasena=nuevo_hash or actual.hash_contrasena
+        )
+        ok = self.dao.editar(dto)
+        if ok:
+            return {"ok": True, "mensaje": "Empleado actualizado correctamente."}
+        else:
+            return {"ok": False, "mensaje": "Error al actualizar empleado."}
+
     def login(self, run_input, contrasena):
 
-        # Validar
         if not validar_run_chileno(run_input):
             return {"ok": False, "mensaje": "RUN inválido. Use formato 12345678-9."}
-
-        # Normalizar
         try:
             run = normalizar_run(run_input)
         except:
             return {"ok": False, "mensaje": "RUN inválido. Use formato 12345678-9."}
-
-        # Buscar empleado
         datos = self.dao.buscar_por_run(run)
         if not datos:
             return {"ok": False, "mensaje": "Empleado no encontrado."}
-
-        # Verificar contraseña
         if not verificar_contrasena(contrasena, datos.hash_contrasena):
             return {"ok": False, "mensaje": "Contraseña incorrecta."}
-
         empleado = Empleado(datos)
         return {"ok": True, "mensaje": f"Bienvenido {empleado.nombre_completo()}", "empleado": empleado}

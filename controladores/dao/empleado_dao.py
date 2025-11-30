@@ -1,6 +1,7 @@
 from modelos.base_datos import conectar
 from controladores.dto.empleado_dto import EmpleadoDTO
 
+
 class EmpleadoDAO:
     def __init__(self):
         pass
@@ -10,16 +11,14 @@ class EmpleadoDAO:
         cur = con.cursor()
         try:
             cur.execute("""
-                INSERT INTO empleados (codigo, run, nombre, apellido, cargo, password_hash)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                INSERT INTO empleados (run, nombre, apellido, cargo, password_hash)
+                VALUES (%s, %s, %s, %s, %s)
             """, (
-                dto.codigo,
                 dto.run,
                 dto.nombre,
                 dto.apellido,
                 dto.cargo,
-                dto.hash_contrasena
-            ))
+                dto.hash_contrasena))
             con.commit()
             return True
         except Exception as e:
@@ -40,17 +39,15 @@ class EmpleadoDAO:
         return [
             EmpleadoDTO(
                 id=f[0],
-                codigo=f[1],
-                run=f[2],
-                nombre=f[3],
-                apellido=f[4],
-                cargo=f[5],
-                creado_en=f[7],
-                hash_contrasena=f[6]
+                run=f[1],
+                nombre=f[2],
+                apellido=f[3],
+                cargo=f[4],
+                hash_contrasena=f[5],
+                creado_en=f[6]           
             )
             for f in rows
         ]
-
 
     def contar(self):
         con = conectar()
@@ -68,21 +65,18 @@ class EmpleadoDAO:
         row = cur.fetchone()
         cur.close()
         con.close()
-
         if not row:
             return None
-
         return EmpleadoDTO(
             id=row[0],
-            codigo=row[1],
-            run=row[2],
-            nombre=row[3],
-            apellido=row[4],
-            cargo=row[5],
-            creado_en=row[7],
-            hash_contrasena=row[6]
+            run=row[1],
+            nombre=row[2],
+            apellido=row[3],
+            cargo=row[4],
+            hash_contrasena=row[5],
+            creado_en=row[6]
+            
         )
-
 
     def eliminar(self, empleado_id):
         con = conectar()
@@ -93,3 +87,46 @@ class EmpleadoDAO:
         cur.close()
         con.close()
         return filas_afectadas > 0
+
+    def editar(self, dto: EmpleadoDTO):
+        con = conectar()
+        cur = con.cursor()
+        try:
+            cur.execute("""
+                UPDATE empleados
+                SET nombre=%s, apellido=%s, cargo=%s, password_hash=%s
+                WHERE id=%s
+            """, (dto.nombre, dto.apellido, dto.cargo, dto.hash_contrasena, dto.id))
+
+            con.commit()
+            return cur.rowcount > 0
+        except Exception as e:
+            print("ERROR DAO EDITAR:", e)
+            return False
+        finally:
+            cur.close()
+            con.close()
+
+    def buscar_por_id(self, emp_id):
+        con = conectar()
+        cur = con.cursor()
+        cur.execute("SELECT * FROM empleados WHERE id = %s", (emp_id,))
+        row = cur.fetchone()
+        cur.close()
+        con.close()
+
+        if not row:
+            return None
+
+        return EmpleadoDTO(
+            id=row[0],
+            run=row[1],
+            nombre=row[2],
+            apellido=row[3],
+            cargo=row[4],
+            hash_contrasena=row[5],
+            creado_en=row[6]
+        )
+            
+
+

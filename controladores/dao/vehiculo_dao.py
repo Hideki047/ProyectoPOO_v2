@@ -33,16 +33,13 @@ class VehiculoDAO:
     def listar(self, disponibles=None):
         con = conectar()
         cur = con.cursor()
-
         if disponibles is True:
             cur.execute("SELECT * FROM vehiculos WHERE estado = 'DISPONIBLE'")
         else:
             cur.execute("SELECT * FROM vehiculos")
-
         rows = cur.fetchall()
         cur.close()
         con.close()
-
         return [
             VehiculoDTO(
                 id=r[0],
@@ -62,10 +59,8 @@ class VehiculoDAO:
         r = cur.fetchone()
         cur.close()
         con.close()
-
         if not r:
             return None
-
         return VehiculoDTO(
             id=r[0],
             patente=r[1],
@@ -83,10 +78,8 @@ class VehiculoDAO:
         r = cur.fetchone()
         cur.close()
         con.close()
-
         if not r:
             return None
-
         return VehiculoDTO(
             id=r[0],
             patente=r[1],
@@ -106,3 +99,41 @@ class VehiculoDAO:
         cur.close()
         con.close()
         return True
+
+    def editar(self, vehiculo_id, marca, modelo, anio, precio):
+        con = conectar()
+        cur = con.cursor()
+        try:
+            cur.execute("""
+                UPDATE vehiculos
+                SET marca=%s, modelo=%s, anio=%s, precio_diario_uf=%s
+                WHERE id=%s
+            """, (marca, modelo, anio, precio, vehiculo_id))
+            con.commit()
+            return cur.rowcount > 0
+        except Exception as e:
+            print("ERROR DAO EDITAR VEHÍCULO:", e)
+            return False
+        finally:
+            cur.close()
+            con.close()
+
+    def buscar_por_id(self, vehiculo_id):
+        con = conectar()
+        cur = con.cursor()
+        cur.execute("SELECT * FROM vehiculos WHERE id = %s", (vehiculo_id,))
+        row = cur.fetchone()
+        cur.close()
+        con.close()
+        if not row:
+            return None
+        return VehiculoDTO(
+            id=row[0],
+            patente=row[1],
+            marca=row[2],
+            modelo=row[3],
+            anio=row[4],
+            precio_diario_uf=row[5],
+            estado=row[6]
+        )
+

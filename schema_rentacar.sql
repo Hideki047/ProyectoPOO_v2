@@ -2,14 +2,13 @@ CREATE DATABASE IF NOT EXISTS rentacar_seguro CHARACTER SET utf8mb4 COLLATE utf8
 USE rentacar_seguro;
 
 -- Tabla empleados
-CREATE TABLE IF NOT EXISTS empleados (
+CREATE TABLE empleados (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    codigo VARCHAR(20) NOT NULL UNIQUE,
-    run VARCHAR(12) NOT NULL UNIQUE,
+    run VARCHAR(15) NOT NULL UNIQUE,
     nombre VARCHAR(50) NOT NULL,
     apellido VARCHAR(50) NOT NULL,
-    cargo ENUM('Gerente', 'Ejecutivo') NOT NULL,
-    password_hash VARCHAR(255) NOT NULL,
+    cargo VARCHAR(20) NOT NULL,
+    password_hash VARCHAR(200) NOT NULL,
     creado_en TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

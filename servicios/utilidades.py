@@ -20,7 +20,8 @@ def validar_run_chileno(run: str) -> bool:
 
     numero, dv = run_normalizado.split("-", maxsplit=1)
     dv_calculado = _calcular_dv(numero)
-    return dv_calculado == dv
+    return dv_calculado.upper() == dv.upper()
+
 
 
 def _calcular_dv(numero: str) -> str:
@@ -63,19 +64,21 @@ def obtener_valor_uf(fecha: datetime) -> float:
 def normalizar_run(run: str) -> str:
     if not run:
         raise ValueError("RUN vacío")
+
     run_limpio = run.replace(".", "").replace(" ", "").upper()
+
     if "-" in run_limpio:
-        partes = run_limpio.split("-", maxsplit=1)
-        if len(partes) != 2:
-            raise ValueError("RUN con formato inválido.")
-        numero, dv = partes
+        numero, dv = run_limpio.split("-", maxsplit=1)
     else:
-        if len(run_limpio) < 2:
-            raise ValueError("RUN demasiado corto.")
         numero, dv = run_limpio[:-1], run_limpio[-1]
+
     if not numero.isdigit():
         raise ValueError("RUN inválido, el cuerpo debe ser numérico.")
-    numero = str(int(numero))
+
+    # NO convertir a int, así NO se pierden ceros
+    numero = numero.lstrip("0")  # quitar solo ceros iniciales irrelevantes
+    if numero == "":
+        numero = "0"
 
     return f"{numero}-{dv}"
 
