@@ -221,14 +221,11 @@ class VistaConsola:
                 print("RUN inválido. Use formato 12345678-9.")
                 continue
 
-        # ==== RESTO DE DATOS ====
         nombre = input("Nombre: ").strip()
         apellido = input("Apellido: ").strip()
         cargo = input("Cargo (Gerente/Ejecutivo): ").title().strip()
-
         c1 = pwinput.pwinput("Contraseña: ", mask="*")
         c2 = pwinput.pwinput("Repetir contraseña: ", mask="*")
-
         res = self.ctrl_empleados.crear_empleado(
             run_input=run,
             nombre=nombre,
@@ -683,88 +680,59 @@ class VistaConsola:
             self.pausar()
             return
 
-
-
     def listar_arriendos(self):
         self.titulo("Listado de Arriendos")
-
         arriendos = self.ctrl_arriendos.listar_arriendos()
         if not arriendos:
             print("No hay arriendos registrados.")
             self.pausar()
             return
-
         hoy = date.today()
-
         print("ID | Cliente | Vehículo | Fechas | Estado | Total")
         print("-" * 95)
-
         for a in arriendos:
             cliente = f"{a.cliente_nombre} {a.cliente_apellido}"
             vehiculo = f"{a.vehiculo_marca} {a.vehiculo_modelo}"
             fechas = f"{a.fecha_inicio.date()} → {a.fecha_fin.date()}"
-
             estado = "EXPIRADO" if a.fecha_fin.date() < hoy else "VIGENTE"
-
             total = f"{a.total_uf:.2f} UF | ${a.total_clp:,}"
-
             print(f"{a.id} | {cliente} | {vehiculo} | {fechas} | {estado} | {total}")
-
         self.pausar()
 
     def cancelar_arriendo(self):
         self.limpiar()
         self.titulo("Cancelar Arriendo")
-
         arriendos = self.ctrl_arriendos.listar_arriendos()
-
         if not arriendos:
             print("No hay arriendos registrados.")
             self.pausar()
             return
-
-        # --- Mostrar tabla ---
         print("ID | Cliente | Vehículo | Estado")
         print("-" * 70)
-
         for a in arriendos:
             d = a.obtener_datos()
             print(f"{d['id']} | {d['cliente']} | {d['vehiculo']} | {d['estado']}")
-
         print("\n0) Volver")
 
-        # --- Pedir ID ---
         while True:
             op = input("ID Arriendo a cancelar: ").strip()
-
             if op == "0":
                 return
-
             if not op.isdigit():
                 print("❌ Debe ingresar un número.")
                 continue
-
             aid = int(op)
-
-            # Buscar arriendo por ID
             arriendo = self.ctrl_arriendos.buscar_por_id(aid)
-
             if not arriendo:
                 print("❌ No existe un arriendo con ese ID.")
                 continue
-
             break
-
-        # --- Confirmación ---
         confirmar = input("¿Confirmar cancelación? (Y/N): ").strip().lower()
-
         if confirmar != "y":
             print("Cancelado.")
             self.pausar()
             return
-
-        # Cancelar en el controlador
         res = self.ctrl_arriendos.cancelar_arriendo(aid)
-
         print(res["mensaje"])
         self.pausar()
+

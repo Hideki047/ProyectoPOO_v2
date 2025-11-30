@@ -1,7 +1,6 @@
 from modelos.base_datos import conectar
 from controladores.dto.empleado_dto import EmpleadoDTO
 
-
 class EmpleadoDAO:
     def __init__(self):
         pass
@@ -35,7 +34,6 @@ class EmpleadoDAO:
         rows = cur.fetchall()
         cur.close()
         con.close()
-
         return [
             EmpleadoDTO(
                 id=f[0],
@@ -74,8 +72,7 @@ class EmpleadoDAO:
             apellido=row[3],
             cargo=row[4],
             hash_contrasena=row[5],
-            creado_en=row[6]
-            
+            creado_en=row[6]            
         )
 
     def eliminar(self, empleado_id):
@@ -97,7 +94,6 @@ class EmpleadoDAO:
                 SET nombre=%s, apellido=%s, cargo=%s, password_hash=%s
                 WHERE id=%s
             """, (dto.nombre, dto.apellido, dto.cargo, dto.hash_contrasena, dto.id))
-
             con.commit()
             return cur.rowcount > 0
         except Exception as e:
@@ -114,10 +110,8 @@ class EmpleadoDAO:
         row = cur.fetchone()
         cur.close()
         con.close()
-
         if not row:
             return None
-
         return EmpleadoDTO(
             id=row[0],
             run=row[1],

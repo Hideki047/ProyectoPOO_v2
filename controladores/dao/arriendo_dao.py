@@ -37,7 +37,6 @@ class ArriendoDAO:
     def listar_arriendos(self):
         con = conectar()
         cur = con.cursor()
-
         try:
             cur.execute("""
                 SELECT 
@@ -59,9 +58,7 @@ class ArriendoDAO:
                 JOIN vehiculos v ON a.vehiculo_id = v.id
                 ORDER BY a.id ASC
             """)
-
             rows = cur.fetchall()
-
             lista = []
             for r in rows:
                 lista.append(ArriendoDTO(
@@ -79,17 +76,13 @@ class ArriendoDAO:
                     vehiculo_marca=r[11],
                     vehiculo_modelo=r[12]
                 ))
-
             return lista
-
         except Exception as e:
             print("ERROR DAO listar_arriendos:", e)
             return []
-
         finally:
             cur.close()
             con.close()
-
 
     def buscar_por_id(self, arriendo_id):
         con = conectar()
@@ -98,10 +91,8 @@ class ArriendoDAO:
         f = cur.fetchone()
         cur.close()
         con.close()
-
         if not f:
             return None
-
         return ArriendoDTO(
             id=f[0],
             vehiculo_id=f[1],

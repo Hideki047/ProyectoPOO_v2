@@ -1,7 +1,6 @@
 from modelos.base_datos import conectar
 from controladores.dto.vehiculo_dto import VehiculoDTO
 
-
 class VehiculoDAO:
     def __init__(self):
         pass
@@ -136,4 +135,3 @@ class VehiculoDAO:
             precio_diario_uf=row[5],
             estado=row[6]
         )
-

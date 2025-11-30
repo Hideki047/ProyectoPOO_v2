@@ -22,8 +22,6 @@ def validar_run_chileno(run: str) -> bool:
     dv_calculado = _calcular_dv(numero)
     return dv_calculado.upper() == dv.upper()
 
-
-
 def _calcular_dv(numero: str) -> str:
     factores = [2, 3, 4, 5, 6, 7]
     suma = 0
@@ -36,10 +34,8 @@ def _calcular_dv(numero: str) -> str:
         return "K"
     return str(resto)
 
-
 def validar_telefono(telefono: str) -> bool:
     return re.fullmatch(r"\+?\d{8,15}", telefono) is not None
-
 
 def obtener_valor_uf(fecha: datetime) -> float:
     fecha_str = fecha.strftime("%d-%m-%Y")
@@ -75,8 +71,7 @@ def normalizar_run(run: str) -> str:
     if not numero.isdigit():
         raise ValueError("RUN inválido, el cuerpo debe ser numérico.")
 
-    # NO convertir a int, así NO se pierden ceros
-    numero = numero.lstrip("0")  # quitar solo ceros iniciales irrelevantes
+    numero = numero.lstrip("0")  
     if numero == "":
         numero = "0"
 

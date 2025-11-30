@@ -1,11 +1,9 @@
 from modelos.base_datos import conectar
 from controladores.dto.cliente_dto import ClienteDTO
 
-
 class ClienteDAO:
     def __init__(self):
         self.conn = conectar()
-
 
     def crear(self, dto: ClienteDTO):
         try:
@@ -33,7 +31,6 @@ class ClienteDAO:
         cur.execute("SELECT * FROM clientes")
         rows = cur.fetchall()
         cur.close()
-
         return [
             ClienteDTO(
                 id=r[0],
@@ -50,10 +47,8 @@ class ClienteDAO:
         cur.execute("SELECT * FROM clientes WHERE run = %s", (run,))
         r = cur.fetchone()
         cur.close()
-
         if not r:
             return None
-
         return ClienteDTO(
             id=r[0],
             run=r[1],
@@ -69,10 +64,8 @@ class ClienteDAO:
             cur.execute("SELECT * FROM clientes WHERE id = %s", (cliente_id,))
             r = cur.fetchone()
             cur.close()
-
             if not r:
                 return None
-
             return ClienteDTO(
                 id=r[0],
                 run=r[1],
@@ -81,7 +74,6 @@ class ClienteDAO:
                 direccion=r[4],
                 telefono=r[5]
             )
-
         except Exception as e:
             print("ERROR CLIENTE_DAO buscar_por_id:", e)
             return None
@@ -102,7 +94,6 @@ class ClienteDAO:
         self.conn.commit()
         cur.close()
         return True
-
 
     def eliminar(self, cliente_id):
         cur = self.conn.cursor()

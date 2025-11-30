@@ -24,8 +24,6 @@ class ArriendoDTO:
         self.total_uf = total_uf
         self.total_clp = total_clp
         self.estado = estado
-
-        # Datos opcionales (JOIN)
         self.cliente_nombre = cliente_nombre
         self.cliente_apellido = cliente_apellido
         self.vehiculo_marca = vehiculo_marca
